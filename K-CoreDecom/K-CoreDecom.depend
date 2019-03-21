@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1553157404 source:c:\users\douzhenhao\documents\c++\k-coredecom\src\graph.cpp
+	"Graph.h"
+	<vector>
+	<iostream>
+	<algorithm>
+
+1553090171 c:\users\douzhenhao\documents\c++\k-coredecom\include\graph.h
+	<vector>
+
+1553157299 source:c:\users\douzhenhao\documents\c++\k-coredecom\main.cpp
+	<iostream>
+	"Graph.h"
+	<cstdio>
+	<cstdlib>
+	<vector>
+	<cstring>
+	<fstream>
+	<algorithm>
+
