@@ -61,3 +61,14 @@ bool Graph::isNeighbor(int x, int y) {
 	return false;
 }
 
+int* Graph::get_Neighbor(int x) {
+	int *NeighborList = new int[deg[x] + 5];
+	int i = 1;
+	int k = first[x];
+	while (k != -1) {
+		NeighborList[i++] = edg[k].to;
+		k = edg[k].next;
+	}
+	return NeighborList;
+}
+

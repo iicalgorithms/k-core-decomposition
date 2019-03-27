@@ -18,6 +18,7 @@ public:
 	int get_M();
 	int get_Deg(int i);
 	bool isNeighbor(int x, int y);
+	int* get_Neighbor(int x);
 
 protected:
 
