@@ -23,8 +23,8 @@ public:
 	double get_p(int x, int id);
 	int* get_Neighbor(int x);
 	int* get_VertexList();
-	void delete_Vert(int x);
-	void Re_Vert(int x);
+	//void delete_Vert(int x);
+	//void Re_Vert(int x);
 
 protected:
 
@@ -35,6 +35,6 @@ private:
 	map<int, int> first;
 	map<int, int> deg;
 	map<int, int> Vid;
-	map<int, bool> fx;
+	//map<int, bool> fx;
 };
 

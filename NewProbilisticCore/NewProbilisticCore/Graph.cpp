@@ -30,12 +30,12 @@ void Graph::add_Edge(int tx, int ty, double p) {
 	if (first.count(tx) == 0) {
 		first.insert(pair<int, int>(tx, -1));
 		deg.insert(pair<int, int>(tx, 0));
-		fx.insert(pair<int, int>(tx, true));
+		//fx.insert(pair<int, int>(tx, true));
 	}
 	if (first.count(ty) == 0) {
 		deg.insert(pair<int, int>(ty, 0));
 		first.insert(pair<int, int>(ty, -1));
-		fx.insert(pair<int, int>(ty, true));
+		//fx.insert(pair<int, int>(ty, true));
 	}
 	Edge e1;
 	e1.to = ty;
@@ -62,14 +62,14 @@ int Graph::get_M() {
 }
 
 int Graph::get_Deg(int x) {
-	int ans = 0;
-	int k = first[x];
-	while (k != -1) {
-		if (fx[edg[k].to]) ans++;
-		k = edg[k].next;
-	}
-	return ans;
-	//return deg[i];
+	//int ans = 0;
+	//int k = first[x];
+	//while (k != -1) {
+	//	if (fx[edg[k].to]) ans++;
+	//	k = edg[k].next;
+	//}
+	//return ans;
+	return deg[x];
 }
 
 bool Graph::isNeighbor(int x, int y) {
@@ -84,7 +84,8 @@ bool Graph::isNeighbor(int x, int y) {
 double Graph::get_p(int x, int id) {
 	int k = first[x];
 	while (k != -1) {
-		if(fx[edg[k].to]) id--;
+		//if(fx[edg[k].to]) 
+			id--;
 		if (id == 0) return edg[k].p;
 		k = edg[k].next;
 	}
@@ -104,7 +105,8 @@ int* Graph::get_Neighbor(int x) {
 	int i = 1;
 	int k = first[x];
 	while (k != -1) {
-		if(fx[edg[k].to]) NeighborList[i++] = Vid[edg[k].to];
+		//if(fx[edg[k].to]) 
+			NeighborList[i++] = Vid[edg[k].to];
 		k = edg[k].next;
 	}
 	return NeighborList;
@@ -120,10 +122,10 @@ int* Graph::get_VertexList() {
 	return VertexList;
 }
 
-void Graph::delete_Vert(int x) {
-	fx[x] = false;
-}
+//void Graph::delete_Vert(int x) {
+//	fx[x] = false;
+//}
 
-void Graph::Re_Vert(int x) {
-	fx[x] = true;
-}
+//void Graph::Re_Vert(int x) {
+//	fx[x] = true;
+//}

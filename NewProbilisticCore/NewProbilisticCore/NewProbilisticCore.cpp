@@ -16,6 +16,17 @@ using namespace std;
 #define MAXN 0x7fffffff;
 #define random(x) (rand() % x)
 
+struct node {
+	int core;
+	double p;
+};
+
+bool cmp(node a, node b) {
+	if (a.p > b.p) return true;
+	if (a.p == b.p && a.core > b.core) return true;
+	return false;
+}
+
 int calc_etadeg(Graph* G, map<pair<int, int>, double> &Pr, int ti, int tx, double eta) {
 	//int n = G->get_N();
 	//int *VertexList = G->get_VertexList();
@@ -48,8 +59,22 @@ int calc_etadeg(Graph* G, map<pair<int, int>, double> &Pr, int ti, int tx, doubl
 	return ans;
 }
 
-int computeEtaCore(int* est, int n, int k, int de) {
+int computeEtaCore(node* est, int n, int k, int de) {
+	sort(est + 1, est + 1 + n, cmp);
 	int *cnt = new int[k + 10];
+	for (int i = 1; i <= k; i++) cnt[i] = 0;
+	for (int i = 1; i <= de; i++) {
+		int j = min(k, est[i].core);
+		cnt[j]++;
+	}
+	for (int i = k; i >= 2; i--) {
+		cnt[i - 1] += cnt[i];
+	}
+	int i = k;
+	while (i > 0 && cnt[i] < i) i--;
+	delete[] cnt;
+	return i;
+	/*int *cnt = new int[k + 10];
 	for (int i = 1; i <= k; i++) cnt[i] = 0;
 	//   printf("u = %d, k = %d\n", u, k);
 	for (int i = 1; i <= n; i++) {
@@ -69,7 +94,7 @@ int computeEtaCore(int* est, int n, int k, int de) {
 	int i = k;
 	while (i > it && cnt[i] < i) i--;
 	delete[] cnt;
-	return i;
+	return i;*/
 }
 
 int* get_K_Core(Graph* G, double P) {
@@ -94,56 +119,59 @@ int* get_K_Core(Graph* G, double P) {
 		}
 		delete[] VertNeighborList;
 	}
-	vector<int> Edelete;
+	//vector<int> Edelete;
 	vector<int> Tchanged;
 	vector<double> ETime;
+	vector<double> Error_p;
 	int tot = 0;
 	clock_t startTime, endTime;
 	ofstream out("ans.txt");
 
-	int round = 70;
-	while (round--) {
-		printf("%d\n", round);
+	while (true) {
 		startTime = clock();
 		for (int i = 1; i <= n; i++) changed[i] = false;
+		double err = 0.0;
 
 		for (int i = 1; i <= n; i++) {
 			int tx = VertexList[i];
 			int *NeighborList = G->get_Neighbor(tx);
 			int de = G->get_Deg(tx);
 			for (int j = 1; j <= de; j++) {
-				int ty = VertexList[NeighborList[j]];
+				//int ty = VertexList[NeighborList[j]];
 				pair<int, int> p1(i, NeighborList[j]);
 				double px = 0.1 * (random(10) + 1);
 				double ex = G->get_p(tx, j);
 				if (px <= ex) 
 					Count[p1]++; 
-				else {
-					Edelete.push_back(ty);
-					G->delete_Vert(ty);
-				}
+				//else {
+				//	Edelete.push_back(ty);
+				//	G->delete_Vert(ty);
+				//}
 				Pr[p1] = (1.0 * Count[p1]) / (1.0 * tot + 1.0);
+				err += fabs(Pr[p1] - ex);
 			}
 			int etadeg = calc_etadeg(G, Pr, i, tx, P);
-			NeighborList = G->get_Neighbor(tx);
-			de = G->get_Deg(tx);
-			int *NeighborCore = new int[de + 10];
+			//NeighborList = G->get_Neighbor(tx);
+			//de = G->get_Deg(tx);
+			node *NeighborCore = new node[de + 10];
 			for (int j = 1; j <= de; j++) {
-				NeighborCore[j] = core[NeighborList[j]];
+				NeighborCore[j].core = core[NeighborList[j]];
+				NeighborCore[j].p = G->get_p(tx, j);
 			}
 			int t = computeEtaCore(NeighborCore, de, core[i], etadeg);
-			if (t < core[i]) {
+			if (t != core[i]) {
 				core[i] = t;
 				changed[i] = true;
 			}
-			for (vector<int>::iterator it = Edelete.begin(); it != Edelete.end(); it++) {
-				G->Re_Vert(*it);
-			}
-			Edelete.clear();
+			//for (vector<int>::iterator it = Edelete.begin(); it != Edelete.end(); it++) {
+			//	G->Re_Vert(*it);
+			//}
+			//Edelete.clear();
 			delete[] NeighborCore;
 			delete[] NeighborList;
 		}
 
+		Error_p.push_back(err);
 		Tchanged.push_back(0);
 		for (int i = 1; i <= n; i++) {
 			if (changed[i] == false) Tchanged[tot]++;
@@ -154,9 +182,16 @@ int* get_K_Core(Graph* G, double P) {
 		double nowTime = (double)(endTime - startTime) / CLOCKS_PER_SEC;
 		ETime.push_back(nowTime);
 		out << "This " << tot << " round, Not Changed Nodes = " << Tchanged[tot - 1] << ", Run Times = " << nowTime << endl;
-		//if (Tchanged[tot - 1] == n) break;
+		if (n - Tchanged[tot - 1] <= 10) break;
 	}
 	out.close();
+
+	ofstream rout("Error.txt");
+	for (int i = 0; i < tot; i++) {
+		rout << Error_p[i] << endl;
+	}
+	rout.close();
+
 	delete[] VertexList;
 	delete[] changed;
 	return core;
@@ -167,7 +202,7 @@ int main()
 	srand((int)time(0));
 	char buffer[256];
 	Graph *G = new Graph;
-	ifstream in("p2p-Gnutella08.txt");
+	ifstream in("./Data/p2p-Gnutella31.txt");
 	if (!in.is_open()) {
 		printf("Error opening file");
 		return 0;
