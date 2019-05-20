@@ -1,7 +1,5 @@
 // CreateEdgeP.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
-
-#include "pch.h"
 #include "Graph.h"
 #include <iostream>
 #include <cstdlib>
@@ -55,23 +53,6 @@ void Create_P(Graph* G) {
 			if (px <= ex) Count[it->first]++;
 		}
 		printf("%d\n", Ro);
-		/*Error_p = 0.0;
-		for (int i = 1; i <= n; i++) {
-			int tx = VertexList[i];
-			int *NeighborList = G->get_Neighbor(tx);
-			int de = G->get_Deg(tx);
-			for (int j = 1; j <= de; j++) {
-				pair<int, int> p1(i, NeighborList[j]);
-				double px = 0.01 * (random(100) + 1);
-				double ex = G->get_p(tx, j);
-				if (px <= ex) 	Count[p1]++;
-				Pr[p1] = (1.0 * Count[p1]) / Ro;
-				Error_p += fabs(Pr[p1] - ex);
-			}
-			delete[] NeighborList;
-		}
-		rout << Ro << '	' << Error_p << endl;
-		printf("%d  %.2f\n", Ro, Error_p);*/
 	}
 	rout.close();
 
