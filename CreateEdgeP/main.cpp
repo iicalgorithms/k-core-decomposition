@@ -1,6 +1,7 @@
 // CreateEdgeP.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 
+#include "pch.h"
 #include "Graph.h"
 #include <iostream>
 #include <cstdlib>
@@ -42,7 +43,7 @@ void Create_P(Graph* G) {
 	}
 
 	ofstream rout;
-        rout.open("ProbilisticCore_TwoStage_Error.txt");
+	rout.open("ProbilisticCore_TwoStage_Error.txt");
 	int Round1 = (int)(ceil(8.0 * log10(n) / G->get_min_p()));
 	printf("%d %.2f %d\n", n, G->get_min_p(), Round1);
 	double Error_p;
@@ -89,7 +90,7 @@ int main()
 	srand((int)time(0));
 	char buffer[256];
 	Graph *G = new Graph;
-	ifstream in("./107.txt");
+	ifstream in("./Data/104.txt");
 	if (!in.is_open()) {
 		printf("Error opening file");
 		return 0;
@@ -99,46 +100,37 @@ int main()
 	double P = 0.0;
 	while (!in.eof()) {
 		in.getline(buffer, 100);
-		int len = strlen(buffer) - 1;
+		int len = strlen(buffer);
+		if (buffer[0] == 'c') continue;
 		int x1 = 0, x2 = 0, k = 0;
+		if (buffer[0] == 'p') k = 5;
+		else if (buffer[0] == 'a') k = 2;
 		double px = 0.0;
 		for (k; k < len; k++) {
-			if (buffer[k] == '	') break;
+			if (buffer[k] == ' ') break;
 			x1 = x1 * 10 + (int)(buffer[k] - '0');
 		}
 		k++;
 		if (is_oneline) {
 			G->init(x1);
 			is_oneline = false;
+			//printf("%d\n", x1);
 		}
 		else {
-			/*for (; k < len; k++) {
-				x2 = x2 * 10 + (int)(buffer[k] - '0');
-			}
-			if (x1 == 0 && x2 == 0) break;
-			x1++; x2++;
-			double px = 0.1 * (random(10) + 1);
-			G->add_Edge(x1, x2, px);*/
 			for (; k < len; k++) {
-				if (buffer[k] == '	') break;
+				if (buffer[k] == ' ') break;
 				x2 = x2 * 10 + (int)(buffer[k] - '0');
 			}
 			k++;
 			for (; k < len; k++) {
-				if (buffer[k] == '.') break;
-				px = px * 10.0 + 1.0 * (int)(buffer[k] - '0');
+				if (buffer[k] == ' ') break;
+				px = px * 10 + (int)(buffer[k] - '0');
 			}
-			double td = 0.1;
-			k++;
-			for (; k < len; k++) {
-				px = px + td * (int)(buffer[k] - '0');
-				td *= 0.1;
-			}
+			px /= 100;
 			if (x1 == 0 && x2 == 0) break;
 			x1++; x2++;
 			G->add_Edge(x1, x2, px);
-			//printf("%s\n",buffer);
-			//printf("%d %d %.2f",x1,x2,px);return 0;
+			//printf("%d %d %.2f",x1,x2,px);
 		}
 	}
 	in.close();
